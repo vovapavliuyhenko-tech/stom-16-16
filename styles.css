@@ -2087,3 +2087,5 @@ a, button, label, summary { -webkit-tap-highlight-color: transparent; }
   .logo__text--c16 small { font-size: 7px; }
 }
 @media (max-width: 360px) { .logo__text--c16 small { display: none; } }
+/* курсив с градиентом: запас по краям, чтобы наклон букв не обрезался */
+.theme-brand .footer__item b { padding: 0 .14em; margin: 0 -.14em; }
