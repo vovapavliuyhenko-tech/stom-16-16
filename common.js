@@ -70,3 +70,28 @@
     showBanner();
   });
 })();
+
+/* На компьютере ссылка «tel:» часто ничего не открывает — копируем номер и показываем подсказку */
+(() => {
+  if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  let tip;
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href^="tel:"]');
+    if (!a) return;
+    const num = a.getAttribute('href').slice(4);
+    const pretty = a.textContent.trim().match(/\+?\d[\d\s()-]{8,}/) ? a.textContent.trim() : num;
+    const show = () => {
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.setAttribute('role', 'status');
+        tip.style.cssText = 'position:fixed;left:50%;bottom:24px;z-index:99;transform:translate(-50%,20px);opacity:0;padding:12px 18px;border-radius:14px;background:#111;color:#fff;font:500 14px/1.4 Montserrat,system-ui,sans-serif;box-shadow:0 14px 34px -14px rgba(0,0,0,.5);transition:opacity .3s,transform .3s;pointer-events:none';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = `Номер ${pretty} скопирован — позвоните с телефона`;
+      requestAnimationFrame(() => { tip.style.opacity = '1'; tip.style.transform = 'translate(-50%,0)'; });
+      clearTimeout(tip._t);
+      tip._t = setTimeout(() => { tip.style.opacity = '0'; tip.style.transform = 'translate(-50%,20px)'; }, 3200);
+    };
+    if (navigator.clipboard) navigator.clipboard.writeText(num).then(show, show); else show();
+  });
+})();
